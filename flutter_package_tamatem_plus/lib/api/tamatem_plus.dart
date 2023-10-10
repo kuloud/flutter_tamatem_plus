@@ -87,6 +87,11 @@ class TamatemPlus {
     }
   }
 
+  Future<void> openTamatemPlus() async {
+    var endpointUrl = Uri.parse('${dotenv.env['TAMATEM_GAME_STORE']}');
+    launchUrl(endpointUrl);
+  }
+
   Future<void> getInventoryTtems(bool isRedeemed,
       {CancelToken? cancelToken}) async {
     final response = await Api.core.getInventoryItems(

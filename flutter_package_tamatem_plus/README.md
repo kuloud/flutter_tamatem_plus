@@ -31,8 +31,23 @@ flutter pub add tamatem_plus
 TAMATEM_DOMAIN={TAMATEM_DOMAIN}
 TAMATEM_CLIENT_ID={TAMATEM_CLIENT_ID}
 TAMATEM_CUSTOM_SCHEME={TAMATEM_CUSTOM_SCHEME}
+TAMATEM_GAME_STORE={TAMATEM_GAME_STORE}
 ```
 
+TAMATEM_CUSTOM_SCHEME is the deeplink scheme of the application: 
+```
+{companyname}-{gamename}://{companyname}
+```
+
+Based on the relevant information provided, TamatemPlus provides the following fields:
+
+TAMATEM_DOMAIN is the API domain name, for example, https://stg-be.tamatemplus.com/
+
+TAMATEM_CLIENT_ID is the application's ID
+
+TAMATEM_GAME_STORE is a game store link configured by game manufacturer
+
+---
 
 then included asset with your application,
 

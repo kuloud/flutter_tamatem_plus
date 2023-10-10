@@ -69,6 +69,7 @@ class _TamatemButtonState extends State<TamatemButton> {
                     if (widget.onUserConnected != null) {
                       widget.onUserConnected!(user);
                     }
+                    tamatemPlus.openTamatemPlus();
                   });
                 } else {
                   // TODO connect failed
