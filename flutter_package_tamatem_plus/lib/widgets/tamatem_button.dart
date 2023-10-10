@@ -50,10 +50,13 @@ class _TamatemButtonState extends State<TamatemButton> {
             }
           }
           return InkWell(
-              onTap: () {
-                tamatemPlus.authorize();
-              },
-              child: child);
+            onTap: () {
+              tamatemPlus.authorize();
+            },
+            child: Container(
+              child: widget.child,
+            ),
+          );
         });
       },
     );

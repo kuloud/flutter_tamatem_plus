@@ -55,7 +55,10 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TamatemButton(
-              child: Text('Launch tamatem'),
+              child: Text(
+                'Launch tamatem',
+                style: TextStyle(color: Colors.red),
+              ),
             )
           ],
         ),
