@@ -1,16 +1,20 @@
 # flutter_tamatem_plus
 
-A new Flutter project.
+A flutter project that RESTful integrates Tamatem Plus.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+Tamatem Plus's online document:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+https://developers.tamatemplus.com/
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Start the project
+
+1. Add ".env" file in the root Project:
+
+```
+TAMATEM_DOMAIN={TAMATEM_DOMAIN}
+TAMATEM_CLIENT_ID={TAMATEM_CLIENT_ID}
+TAMATEM_CUSTOM_SCHEME={TAMATEM_CUSTOM_SCHEME}
+```

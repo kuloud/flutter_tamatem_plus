@@ -11,26 +11,56 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+RESTful integrates of Tamatem Plus.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+1. TODO
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+```bash
+flutter pub add tamatem_plus
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+1. Add ".env" file in the root of App project:
 
-```dart
-const like = 'sample';
 ```
+TAMATEM_DOMAIN={TAMATEM_DOMAIN}
+TAMATEM_CLIENT_ID={TAMATEM_CLIENT_ID}
+TAMATEM_CUSTOM_SCHEME={TAMATEM_CUSTOM_SCHEME}
+```
+
+
+then included asset with your application,
+
+``` yaml
+flutter:
+  assets:
+    - .env
+```
+
+2. Init the plugin at beginning of you app launch:
+``` dart
+void main() async {
+  await TamatemPlusPlugin.init();
+
+  runApp(const MyApp());
+}
+```
+
+3. Embed `TamatemButton` in the layout, then customize button if needed.
+``` dart
+TamatemButton(
+    child: Text(
+        'Launch tamatem',
+        style: TextStyle(color: Colors.red),
+    ),
+)
+```
+
 
 ## Additional information
 
