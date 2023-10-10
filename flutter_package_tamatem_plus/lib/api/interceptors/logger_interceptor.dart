@@ -10,7 +10,7 @@ class LoggerInterceptor extends Interceptor {
       final requestPath = '${options.baseUrl}${options.path}';
       logger.i('${options.method} request => $requestPath');
       logger.d('headers => ${options.headers}');
-      // logger.d('queryParameters => ${options.queryParameters}');
+      logger.d('queryParameters => ${options.queryParameters}');
       logger
           .d('data => ${options.data != null ? jsonEncode(options.data) : {}}');
     } catch (e) {
@@ -25,6 +25,8 @@ class LoggerInterceptor extends Interceptor {
       final options = response.requestOptions;
       final requestPath = '${options.baseUrl}${options.path}';
       logger.i('response <= $requestPath StatusCode: ${response.statusCode}');
+      logger.d(
+          'data <= ${response.data != null ? jsonEncode(response.data) : {}}');
     } catch (e) {
       // ignore
     }

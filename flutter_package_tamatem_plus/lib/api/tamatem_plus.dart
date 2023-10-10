@@ -6,7 +6,9 @@ import 'package:tamatem_plus/api/api.dart';
 import 'package:tamatem_plus/api/endpoints/tamatem_endpoint.dart';
 import 'package:tamatem_plus/api/model/authorize_request.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
+import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
+import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,26 +47,42 @@ class TamatemPlus {
         .toJson();
     String queryString =
         queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
-    // String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl = '$endpointUrl?$queryString';
     logger.d(requestUrl.toString());
     launchUrlString(requestUrl, mode: LaunchMode.externalApplication);
   }
 
-  Future<void> getToken(String code, {CancelToken? cancelToken}) async {
-    final response = await Api.core.getToken(
-        GetTokenRequest(
-            code: code,
-            codeVerifier: kCodeVerifier,
-            grantType: kGrantType,
-            scope: kScope,
-            clientId: clientId,
-            redirectUri: redirectUri,
-            codeChallengeMethod: kCodeChallengeMethod,
-            responseType: kResponseType),
-        cancelToken: cancelToken);
-    (await SharedPreferences.getInstance()).setString('access_token', '');
-    // return SearchListEntity.fromRawJson(jsonEncode(response));
+  Future<GetTokenResponse?> getToken(String code,
+      {CancelToken? cancelToken}) async {
+    try {
+      final response = await Api.core.getToken(
+          GetTokenRequest(
+              code: code,
+              codeVerifier: kCodeVerifier,
+              grantType: kGrantType,
+              scope: kScope,
+              clientId: clientId,
+              redirectUri: redirectUri,
+              codeChallengeMethod: kCodeChallengeMethod,
+              responseType: kResponseType),
+          cancelToken: cancelToken);
+      return response;
+    } on Exception catch (e) {
+      logger.e('[getToken]', error: e);
+    }
+  }
+
+  Future<void> setPlayerId(String playerId, {CancelToken? cancelToken}) async {
+    try {
+      final response = await Api.core.setPlayerId(
+          SetPlayerIdRequest(
+            playerId: playerId,
+          ),
+          cancelToken: cancelToken);
+      // return response;
+    } on Exception catch (e) {
+      logger.e('[getToken]', error: e);
+    }
   }
 
   Future<void> getInventoryTtems(bool isRedeemed,

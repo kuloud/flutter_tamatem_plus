@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:tamatem_plus/api/api.dart';
 import 'package:tamatem_plus/api/endpoints.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
+import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
+import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemPlusApi {
@@ -14,21 +18,21 @@ class TamatemPlusApi {
 
   static const String _kApiPostSetPlayerId = 'player/set-player-id/';
 
-  static const String _kApiGetInventoryTtems = 'inventory-item';
+  static const String _kApiGetInventoryTtems = 'inventory-item/';
 
-  static const String _kApiGetUserInfo = '/player/';
+  static const String _kApiGetUserInfo = 'player/';
 
-  static const String _kApiPutRedeemItem = '/inventory/redeem/';
+  static const String _kApiPutRedeemItem = 'inventory/redeem/';
 
-  static const String _kApiPutRedeemAll = '/inventory/redeem/';
+  static const String _kApiPutRedeemAll = 'inventory/redeem/';
 
-  static const String _kApiPostLogout = '/inventory/redeem/';
+  static const String _kApiPostLogout = 'player/logout/';
 
   static const String _kApiPutVerify = 'inventory/verify/';
 
   TamatemPlusApi(this._api);
 
-  Future<void> getToken(GetTokenRequest request,
+  Future<GetTokenResponse> getToken(GetTokenRequest request,
       {CancelToken? cancelToken}) async {
     final response = await _api.post('${Endpoints.kCore}$_kApiPostGetToken',
         options: Options(method: 'POST', headers: {
@@ -36,8 +40,14 @@ class TamatemPlusApi {
         }),
         data: request.toJson(),
         cancelToken: cancelToken);
-    logger.d('---------<> $response');
-    // TODO
+    return getTokenResponseFromJson(jsonEncode(response));
+  }
+
+  Future<void> setPlayerId(SetPlayerIdRequest request,
+      {CancelToken? cancelToken}) async {
+    final response = await _api.post('${Endpoints.kCore}$_kApiPostSetPlayerId',
+        data: request.toJson(), cancelToken: cancelToken);
+    // return setPlayerIdRequestFromJson(jsonEncode(response));
   }
 
   Future<void> getInventoryItems(InventoryItemRequest request,

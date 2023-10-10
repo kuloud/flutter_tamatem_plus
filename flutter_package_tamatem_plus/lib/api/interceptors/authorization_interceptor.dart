@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tamatem_plus/utils/logger.dart';
 
 //* Request methods PUT, POST, PATCH, DELETE needs access token,
 //* which needs to be passed with "Authorization" header as Bearer token.
@@ -12,6 +13,7 @@ class AuthorizationInterceptor extends Interceptor {
     var accessToken =
         (await SharedPreferences.getInstance()).getString('access_token');
     if (accessToken != null) {
+      logger.d('[accessToken]: $accessToken');
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
     super.onRequest(options, handler);

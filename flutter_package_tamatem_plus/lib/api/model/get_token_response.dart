@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:tamatem_plus/api/model/pojos/user.dart';
+
 GetTokenResponse getTokenResponseFromJson(String str) =>
     GetTokenResponse.fromJson(json.decode(str));
 
@@ -12,47 +14,30 @@ String getTokenResponseToJson(GetTokenResponse data) =>
 
 ///Request
 class GetTokenResponse {
-  String clientId;
-  String codeChallenge;
-  String codeChallengeMethod;
-  String redirectUri;
-  String responseType;
-  Results results;
-  int statusCode;
+  GetTokenResults? results;
+  int? statusCode;
+  String? error;
+  String? errorDescription;
 
-  GetTokenResponse({
-    required this.clientId,
-    required this.codeChallenge,
-    required this.codeChallengeMethod,
-    required this.redirectUri,
-    required this.responseType,
-    required this.results,
-    required this.statusCode,
-  });
+  GetTokenResponse(
+      {this.results, this.statusCode, this.error, this.errorDescription});
 
   factory GetTokenResponse.fromJson(Map<String, dynamic> json) =>
       GetTokenResponse(
-        clientId: json["client_id"],
-        codeChallenge: json["code_challenge"],
-        codeChallengeMethod: json["code_challenge_method"],
-        redirectUri: json["redirect_uri"],
-        responseType: json["response_type"],
-        results: Results.fromJson(json["results"]),
-        statusCode: json["status_code"],
-      );
+          results: GetTokenResults.fromJson(json["results"]),
+          statusCode: json["status_code"],
+          error: json["error"],
+          errorDescription: json["error_description"]);
 
   Map<String, dynamic> toJson() => {
-        "client_id": clientId,
-        "code_challenge": codeChallenge,
-        "code_challenge_method": codeChallengeMethod,
-        "redirect_uri": redirectUri,
-        "response_type": responseType,
-        "results": results.toJson(),
+        "results": results?.toJson(),
         "status_code": statusCode,
+        "error": error,
+        "error_description": errorDescription
       };
 }
 
-class Results {
+class GetTokenResults {
   String accessToken;
   int expiresIn;
   String refreshToken;
@@ -60,7 +45,7 @@ class Results {
   String tokenType;
   User user;
 
-  Results({
+  GetTokenResults({
     required this.accessToken,
     required this.expiresIn,
     required this.refreshToken,
@@ -69,7 +54,8 @@ class Results {
     required this.user,
   });
 
-  factory Results.fromJson(Map<String, dynamic> json) => Results(
+  factory GetTokenResults.fromJson(Map<String, dynamic> json) =>
+      GetTokenResults(
         accessToken: json["access_token"],
         expiresIn: json["expires_in"],
         refreshToken: json["refresh_token"],
@@ -85,85 +71,5 @@ class Results {
         "scope": scope,
         "token_type": tokenType,
         "user": user.toJson(),
-      };
-}
-
-class User {
-  dynamic avatar;
-  String country;
-  String dateOfBirth;
-  String firstName;
-  GameSavedData gameSavedData;
-  String gender;
-  int id;
-  String lastName;
-  String qrCode;
-  String signUpThrough;
-  String tamatemId;
-
-  User({
-    required this.avatar,
-    required this.country,
-    required this.dateOfBirth,
-    required this.firstName,
-    required this.gameSavedData,
-    required this.gender,
-    required this.id,
-    required this.lastName,
-    required this.qrCode,
-    required this.signUpThrough,
-    required this.tamatemId,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        avatar: json["avatar"],
-        country: json["country"],
-        dateOfBirth: json["date_of_birth"],
-        firstName: json["first_name"],
-        gameSavedData: GameSavedData.fromJson(json["game_saved_data"]),
-        gender: json["gender"],
-        id: json["id"],
-        lastName: json["last_name"],
-        qrCode: json["qr_code"],
-        signUpThrough: json["sign_up_through"],
-        tamatemId: json["tamatem_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "avatar": avatar,
-        "country": country,
-        "date_of_birth": dateOfBirth,
-        "first_name": firstName,
-        "game_saved_data": gameSavedData.toJson(),
-        "gender": gender,
-        "id": id,
-        "last_name": lastName,
-        "qr_code": qrCode,
-        "sign_up_through": signUpThrough,
-        "tamatem_id": tamatemId,
-      };
-}
-
-class GameSavedData {
-  String exampleKey;
-  String exampleKey1;
-  String exampleKey2;
-
-  GameSavedData({
-    required this.exampleKey,
-    required this.exampleKey1,
-    required this.exampleKey2,
-  });
-
-  factory GameSavedData.fromJson(Map<String, dynamic> json) => GameSavedData(
-        exampleKey: json["exampleKey..."],
-        exampleKey1: json["exampleKey1"],
-        exampleKey2: json["exampleKey2"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "exampleKey...": exampleKey,
-        "exampleKey1": exampleKey1,
-        "exampleKey2": exampleKey2,
       };
 }

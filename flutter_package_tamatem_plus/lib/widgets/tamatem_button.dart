@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/tamatem_plus.dart';
 import 'package:tamatem_plus/callback/authorize/authorize_code_provider.dart';
 import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
@@ -41,10 +43,21 @@ class _TamatemButtonState extends State<TamatemButton> {
           final provider = context.read<AuthorizeCodeProvider>();
           final state = provider.state;
           if (state.code != null) {
-            //
-            logger.d('->>>>${state.code}');
             try {
-              tamatemPlus.getToken(state.code!);
+              tamatemPlus.getToken(state.code!).then((res) async {
+                if (res?.error == null) {
+                  //
+                  var accessToken = res?.results?.accessToken;
+                  var user = res?.results?.user;
+                  if (accessToken != null) {
+                    var shared = await SharedPreferences.getInstance();
+                    await shared.setString('access_token', accessToken);
+                    await shared.setString('user', jsonEncode(user));
+                  }
+                  // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game
+                  tamatemPlus.setPlayerId('${user!.id}');
+                } else {}
+              });
             } catch (e) {
               //
             }
@@ -60,31 +73,5 @@ class _TamatemButtonState extends State<TamatemButton> {
         });
       },
     );
-  }
-
-  Future<void> login() async {
-    try {
-      var credentials = await tamatemPlus.authorize();
-      // logger.d(jsonEncode(credentials));
-
-      setState(() {
-        // _user = credentials.user;
-      });
-    } catch (e) {
-      logger.w(e);
-    }
-  }
-
-  Future<void> logout() async {
-    try {
-      // await auth0
-      //     .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-      //     .logout();
-      setState(() {
-        // _user = null;
-      });
-    } catch (e) {
-      logger.w(e);
-    }
   }
 }
