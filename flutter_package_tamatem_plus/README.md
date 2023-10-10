@@ -20,7 +20,7 @@ RESTful integrates of Tamatem Plus.
 ## Getting started
 
 ```bash
-flutter pub add tamatem_plus
+flutter pub add tamatem_plus(TODO)
 ```
 
 ## Usage
