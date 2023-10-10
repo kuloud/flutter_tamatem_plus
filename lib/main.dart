@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
+import 'package:tamatem_plus/utils/logger.dart';
 import 'package:tamatem_plus/widgets/tamatem_button.dart';
 
 void main() async {
@@ -50,12 +53,15 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TamatemButton(
-              child: Text(
+              onUserConnected: (user) {
+                logger.d('[onConnected]: ${jsonEncode(user)}');
+              },
+              child: const Text(
                 'Launch tamatem',
                 style: TextStyle(color: Colors.red),
               ),

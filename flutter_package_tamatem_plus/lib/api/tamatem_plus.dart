@@ -9,6 +9,7 @@ import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
+import 'package:tamatem_plus/api/model/set_player_id_response.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -72,14 +73,15 @@ class TamatemPlus {
     }
   }
 
-  Future<void> setPlayerId(String playerId, {CancelToken? cancelToken}) async {
+  Future<SetPlayerIdResponse?> setPlayerId(String playerId,
+      {CancelToken? cancelToken}) async {
     try {
       final response = await Api.core.setPlayerId(
           SetPlayerIdRequest(
             playerId: playerId,
           ),
           cancelToken: cancelToken);
-      // return response;
+      return response;
     } on Exception catch (e) {
       logger.e('[getToken]', error: e);
     }

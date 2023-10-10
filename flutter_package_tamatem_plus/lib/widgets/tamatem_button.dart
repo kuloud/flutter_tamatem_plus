@@ -1,23 +1,33 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tamatem_plus/api/model/get_token_response.dart';
+import 'package:tamatem_plus/api/model/pojos/inventory_item.dart';
+import 'package:tamatem_plus/api/model/pojos/user.dart';
 import 'package:tamatem_plus/api/tamatem_plus.dart';
 import 'package:tamatem_plus/callback/authorize/authorize_code_provider.dart';
 import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
+typedef OnUserConnectedCallback = void Function(User user);
+typedef OnInventoryItemsUpdatedCallback = void Function(
+    List<InventoryItem> inventoryItems);
+
 class TamatemButton extends StatefulWidget {
-  const TamatemButton({super.key, required this.child});
+  const TamatemButton(
+      {super.key,
+      required this.child,
+      this.onUserConnected,
+      this.onInventoryItemsChanged});
 
   @override
   State<TamatemButton> createState() => _TamatemButtonState();
 
   final Widget child;
+  final OnUserConnectedCallback? onUserConnected;
+  final OnInventoryItemsUpdatedCallback? onInventoryItemsChanged;
 }
 
 class _TamatemButtonState extends State<TamatemButton> {
@@ -55,8 +65,14 @@ class _TamatemButtonState extends State<TamatemButton> {
                     await shared.setString('user', jsonEncode(user));
                   }
                   // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game
-                  tamatemPlus.setPlayerId('${user!.id}');
-                } else {}
+                  tamatemPlus.setPlayerId('${user!.id}').then((_) {
+                    if (widget.onUserConnected != null) {
+                      widget.onUserConnected!(user);
+                    }
+                  });
+                } else {
+                  // TODO connect failed
+                }
               });
             } catch (e) {
               //

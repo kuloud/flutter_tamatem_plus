@@ -7,6 +7,7 @@ import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
+import 'package:tamatem_plus/api/model/set_player_id_response.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemPlusApi {
@@ -43,11 +44,11 @@ class TamatemPlusApi {
     return getTokenResponseFromJson(jsonEncode(response));
   }
 
-  Future<void> setPlayerId(SetPlayerIdRequest request,
+  Future<SetPlayerIdResponse> setPlayerId(SetPlayerIdRequest request,
       {CancelToken? cancelToken}) async {
     final response = await _api.post('${Endpoints.kCore}$_kApiPostSetPlayerId',
         data: request.toJson(), cancelToken: cancelToken);
-    // return setPlayerIdRequestFromJson(jsonEncode(response));
+    return setPlayerIdResponseFromJson(jsonEncode(response));
   }
 
   Future<void> getInventoryItems(InventoryItemRequest request,
