@@ -10,10 +10,12 @@ import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemButton extends StatefulWidget {
-  const TamatemButton({super.key});
+  const TamatemButton({super.key, required this.child});
 
   @override
   State<TamatemButton> createState() => _TamatemButtonState();
+
+  final Widget child;
 }
 
 class _TamatemButtonState extends State<TamatemButton> {
@@ -47,11 +49,11 @@ class _TamatemButtonState extends State<TamatemButton> {
               //
             }
           }
-          return IconButton(
-              onPressed: () {
+          return InkWell(
+              onTap: () {
                 tamatemPlus.authorize();
               },
-              icon: const Icon(Icons.comment));
+              child: child);
         });
       },
     );
