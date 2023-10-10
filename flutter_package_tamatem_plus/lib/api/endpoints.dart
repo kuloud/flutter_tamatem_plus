@@ -3,5 +3,5 @@ class Endpoints {
 
   static const String kProductionBaseUrl = 'https://admin.tamatemplus.com';
 
-  static const String kCore = '/api';
+  static const String kCore = 'api/';
 }

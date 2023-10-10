@@ -43,7 +43,9 @@ class TamatemPlus {
             codeChallengeMethod: kCodeChallengeMethod,
             responseType: kResponseType)
         .toJson();
-    String queryString = Uri(queryParameters: queryParams).query;
+    String queryString =
+        queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+    // String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl = '$endpointUrl?$queryString';
     logger.d(requestUrl.toString());
     launchUrlString(requestUrl, mode: LaunchMode.externalApplication);

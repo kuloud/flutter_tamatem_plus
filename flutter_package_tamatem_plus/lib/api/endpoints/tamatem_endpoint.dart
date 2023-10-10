@@ -8,27 +8,32 @@ import 'package:tamatem_plus/utils/logger.dart';
 class TamatemPlusApi {
   final Api _api;
 
-  static const String kApiAuthorize = '/o/authorize';
+  static const String kApiAuthorize = 'o/authorize/';
 
-  static const String _kApiGetToken = '/o/get-token';
+  static const String _kApiPostGetToken = 'o/get-token/';
 
-  static const String _kApiInventoryTtems = '/inventory/list';
+  static const String _kApiPostSetPlayerId = 'player/set-player-id/';
 
-  static const String _kApiSetGameData = '/player/set-game-data';
+  static const String _kApiGetInventoryTtems = 'inventory-item';
 
-  static const String _kApiPlayer = '/player';
+  static const String _kApiGetUserInfo = '/player/';
 
-  static const String _kApiRedeem = '/inventory/redeem';
+  static const String _kApiPutRedeemItem = '/inventory/redeem/';
+
+  static const String _kApiPutRedeemAll = '/inventory/redeem/';
+
+  static const String _kApiPostLogout = '/inventory/redeem/';
+
+  static const String _kApiPutVerify = 'inventory/verify/';
 
   TamatemPlusApi(this._api);
 
   Future<void> getToken(GetTokenRequest request,
       {CancelToken? cancelToken}) async {
-    final response = await _api.get('${Endpoints.kCore}$_kApiGetToken',
-        options: Options(headers: {
+    final response = await _api.post('${Endpoints.kCore}$_kApiPostGetToken',
+        options: Options(method: 'POST', headers: {
           Headers.contentTypeHeader: Headers.jsonContentType,
         }),
-        // queryParameters: request.toJson(),
         data: request.toJson(),
         cancelToken: cancelToken);
     logger.d('---------<> $response');
@@ -37,7 +42,7 @@ class TamatemPlusApi {
 
   Future<void> getInventoryItems(InventoryItemRequest request,
       {CancelToken? cancelToken}) async {
-    final response = await _api.get('${Endpoints.kCore}$_kApiInventoryTtems',
+    final response = await _api.get('${Endpoints.kCore}$_kApiGetInventoryTtems',
         options: Options(headers: {
           'Authorization': '',
         }),

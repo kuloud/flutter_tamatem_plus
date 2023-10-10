@@ -2,10 +2,9 @@ library tamatem_plus;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tamatem_plus/callback/authorize/authorize_code_provider.dart';
+import 'package:tamatem_plus/utils/logger.dart';
 import 'package:uni_links/uni_links.dart';
-
-import 'callback/authorize/authorize_code_provider.dart';
-import 'utils/logger.dart';
 
 class TamatemPlusPlugin {
   static final AuthorizeCodeProvider _provider = AuthorizeCodeProvider();
@@ -22,7 +21,7 @@ class TamatemPlusPlugin {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       final initialLink = await getInitialLink();
-      logger.d('------->>>>$initialLink');
+      logger.d('[getInitialLink] > $initialLink');
       if (initialLink != null) {
         _provider.onRedirectToApp(initialLink);
       }
@@ -34,7 +33,7 @@ class TamatemPlusPlugin {
     }
 
     linkStream.listen((event) {
-      logger.d('-listen------>>>>$event');
+      logger.d('[listen] > $event');
       if (event == null) return;
       _provider.onRedirectToApp(event);
     });

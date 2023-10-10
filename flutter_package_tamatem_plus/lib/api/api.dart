@@ -31,8 +31,28 @@ class Api {
     return instance!;
   }
 
-  get(url,
-      {options, queryParameters, data, cancelToken, onSendProgress}) async {
+  get(url, {options, queryParameters, cancelToken}) async {
+    Response response;
+    try {
+      try {
+        logger.d('data => $url ${jsonEncode(queryParameters ?? '{}')}');
+      } catch (e) {
+        logger.e(e);
+      }
+
+      response = await dio.get(url,
+          queryParameters: queryParameters,
+          options: options,
+          cancelToken: cancelToken);
+      return response.data;
+    } on DioException catch (e) {
+      logger.e('[get] DioException', error: e, stackTrace: e.stackTrace);
+    } on Exception catch (e) {
+      logger.e('[get] Exception', error: e);
+    }
+  }
+
+  post(url, {options, data, cancelToken}) async {
     Response response;
     try {
       try {
@@ -41,12 +61,8 @@ class Api {
         logger.e(e);
       }
 
-      response = await dio.get(url,
-          queryParameters: queryParameters,
-          options: options,
-          data: data,
-          cancelToken: cancelToken);
-      logger.d('response---: $response');
+      response = await dio.post(url,
+          options: options, data: data, cancelToken: cancelToken);
       return response.data;
     } on DioException catch (e) {
       logger.e('[post] DioException', error: e, stackTrace: e.stackTrace);
@@ -54,57 +70,6 @@ class Api {
       logger.e('[post] Exception', error: e);
     }
   }
-
-  // post(url, {options, data, cancelToken, onSendProgress, baseUrl}) async {
-  //   Response response;
-  //   try {
-  //     try {
-  //       logger.d('data => $url ${jsonEncode(data ?? '{}')}');
-  //     } catch (e) {
-  //       logger.e(e);
-  //     }
-
-  //     if (baseUrl != null) {
-  //       dio.options.baseUrl = baseUrl;
-  //     } else {
-  //       dio.options.baseUrl = Endpoints.kPlant;
-  //     }
-
-  //     response = await dio.post(url,
-  //         options: options,
-  //         data: data,
-  //         cancelToken: cancelToken,
-  //         onSendProgress: onSendProgress);
-  //     return response.data;
-  //   } on DioException catch (e) {
-  //     logger.e('[post] DioException', error: e);
-  //   } on Exception catch (e) {
-  //     logger.e('[post] Exception', error: e);
-  //   }
-  // }
-
-  // put(url, {options, data, cancelToken, onSendProgress}) async {
-  //   Response response;
-  //   try {
-  //     dio.options.baseUrl = '';
-  //     dio.options.headers["Content-Type"] = "multipart/form-data";
-  //     response = await dio.put(url,
-  //         options: options,
-  //         data: data,
-  //         cancelToken: cancelToken,
-  //         onSendProgress: onSendProgress);
-
-  //     logger.d(
-  //         'response------headers-${response.requestOptions}--: ${response.headers}');
-  //     logger.d('response------code---: ${response.statusCode}');
-  //     logger.d('response------data---: ${response.data}');
-  //     return response;
-  //   } on DioException catch (e) {
-  //     logger.e('[put] DioException', error: e);
-  //   } on Exception catch (e) {
-  //     logger.e('[put] Exception', error: e);
-  //   }
-  // }
 
   static void cancelRequests(CancelToken token) {
     token.cancel("cancelled");
