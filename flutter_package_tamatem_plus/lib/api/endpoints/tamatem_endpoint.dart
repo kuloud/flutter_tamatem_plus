@@ -13,7 +13,6 @@ import 'package:tamatem_plus/api/model/inventory_item_response.dart';
 import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_response.dart';
-import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemPlusApi {
   final Api _api;
