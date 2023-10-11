@@ -11,6 +11,7 @@ import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/get_user_info_request.dart';
 import 'package:tamatem_plus/api/model/get_user_info_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
+import 'package:tamatem_plus/api/model/inventory_item_response.dart';
 import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_response.dart';
@@ -96,11 +97,13 @@ class TamatemPlus {
     launchUrl(endpointUrl);
   }
 
-  Future<GetInventoryItemsResponse?> getInventoryTtems(bool isRedeemed,
+  Future<GetInventoryItemsResponse?> getInventoryTtems(bool? isRedeemed,
       {CancelToken? cancelToken}) async {
     try {
       final response = await Api.core.getInventoryItems(
-          InventoryItemRequest(isRedeemed: isRedeemed),
+          isRedeemed != null
+              ? InventoryItemRequest(isRedeemed: isRedeemed)
+              : null, // without 'isRedeemed' to get all
           cancelToken: cancelToken);
       return response;
     } on Exception catch (e) {
@@ -119,6 +122,43 @@ class TamatemPlus {
     } catch (e) {
       logger.e('[getUserInfo]', error: e);
     }
+    return null;
+  }
+
+  Future<InventoryRedeemResponse?> redeem(String inventoryId,
+      {CancelToken? cancelToken, bool? isRedeemed}) async {
+    try {
+      final response = await Api.core.redeem(
+          inventoryId,
+          isRedeemed != null
+              ? InventoryItemRequest(isRedeemed: isRedeemed)
+              : null,
+          cancelToken: cancelToken);
+      return response;
+    } on Exception catch (e) {
+      logger.e('[redeem]', error: e);
+    } catch (e) {
+      logger.e('[redeem]', error: e);
+    }
+    return null;
+  }
+
+  /// TODO
+  Future<GetUserInfoResponse?> verify(String inventoryId,
+      {CancelToken? cancelToken, bool? isVerified}) async {
+    // try {
+    //   final response = await Api.core.redeem(
+    //       inventoryId,
+    //       isVerified != null
+    //           ? InventoryItemRequest(isRedeemed: isVerified)
+    //           : null,
+    //       cancelToken: cancelToken);
+    //   return response;
+    // } on Exception catch (e) {
+    //   logger.e('[verify]', error: e);
+    // } catch (e) {
+    //   logger.e('[verify]', error: e);
+    // }
     return null;
   }
 

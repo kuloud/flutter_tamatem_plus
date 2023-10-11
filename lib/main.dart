@@ -88,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 future: _fetchUser,
                 builder: (context, snapshot) {
                   var user = snapshot.data;
-                  logger.d('---${jsonEncode(user)}');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                       return const Center(
@@ -129,36 +128,39 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
+          child: const Icon(Icons.sync),
           onPressed: () {
             logger.d('isConnected: ${TamatemPlusPlugin.isConnected()}');
-            if (TamatemPlusPlugin.isConnected()) {
-              setState(() {
-                _fetchUser = TamatemPlusPlugin.getUserInfo();
-                _fetchItems = TamatemPlusPlugin.fetchInventoryItems();
-              });
-            }
+            _refetchData();
           }),
     );
+  }
+
+  void _refetchData() {
+    if (TamatemPlusPlugin.isConnected()) {
+      setState(() {
+        _fetchUser = TamatemPlusPlugin.getUserInfo();
+        _fetchItems = TamatemPlusPlugin.fetchInventoryItems();
+      });
+    }
   }
 
   Widget _buildUserInfoCard(User user) {
     return Card(
       child: Column(children: [
         ListTile(
-          // leading: CircleAvatar(
-          //   backgroundImage: NetworkImage('${user.avatar}'),
-          // ),
-          title: const Text('id'),
-          trailing: Text('${user.id}'),
-        ),
-        ListTile(
-          title: const Text('country'),
-          trailing: Text('${user.country}'),
+          leading: (user.avatar != null)
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage('${user.avatar}'),
+                )
+              : null,
+          title: Text('ID: ${user.id}'),
+          subtitle: Text('Name: ${user.firstName}'),
+          trailing: Text('country: ${user.id}'),
         ),
         ListTile(
           title: const Text('gameSavedData'),
-          trailing: Text('${jsonEncode(user.gameSavedData)}'),
+          trailing: Text(jsonEncode(user.gameSavedData ?? {})),
         ),
       ]),
     );
@@ -166,36 +168,40 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildInventoryCard(InventoryItem inventoryItem) {
     return Card(
-      child: Column(children: [
-        ListTile(
-          title: const Text('id'),
-          trailing: Text(inventoryItem.id ?? ''),
-        ),
-        ListTile(
-          title: const Text('name'),
-          trailing: Text(inventoryItem.name ?? ''),
-        ),
-        ListTile(
-          title: const Text('player_full_name'),
-          trailing: Text(inventoryItem.playerFullName ?? ''),
-        ),
-        ListTile(
-          title: const Text('player_serial_number'),
-          trailing: Text(inventoryItem.playerSerialNumber ?? ''),
-        ),
-        ListTile(
-          title: const Text('game_player_id'),
-          trailing: Text(inventoryItem.gamePlayerId ?? ''),
-        ),
-        ListTile(
-          title: const Text('is_redeemed'),
-          trailing: Text('${inventoryItem.isRedeemed}'),
-        ),
-        ListTile(
-          title: const Text('is_verified'),
-          trailing: Text('${inventoryItem.isVerified}'),
-        ),
-      ]),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text(
+            'Inventory Item:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          Text('${inventoryItem.id}\n'),
+          Text('Game Player ID: ${inventoryItem.gamePlayerId}'),
+          Text('Player Full Name: ${inventoryItem.playerFullName}'),
+          Text('Player SerialNumber: ${inventoryItem.playerSerialNumber}'),
+          if (inventoryItem.isRedeemed ?? false) const Text('Redeemed'),
+          if (inventoryItem.isVerified ?? false) const Text('Verified'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (!(inventoryItem.isRedeemed ?? true))
+                TextButton(
+                    onPressed: () {
+                      TamatemPlusPlugin.redeem(inventoryItem.id!,
+                              isRedeemed: true)
+                          .then((value) => _refetchData());
+                    },
+                    child: const Text('Redeem')),
+              // if (!(inventoryItem.isVerified ?? true))
+              //   TextButton(
+              //       onPressed: () {
+              //         TamatemPlusPlugin.verify(inventoryItem.id!);
+              //       },
+              //       child: const Text('Verify'))
+            ],
+          )
+        ]),
+      ),
     );
   }
 }

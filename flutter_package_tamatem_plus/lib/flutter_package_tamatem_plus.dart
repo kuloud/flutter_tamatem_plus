@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tamatem_plus/api/model/inventory_item_response.dart';
 import 'package:tamatem_plus/api/model/pojos/inventory_item.dart';
 import 'package:tamatem_plus/api/model/pojos/user.dart';
 import 'package:tamatem_plus/api/tamatem_plus.dart';
@@ -49,12 +50,27 @@ class TamatemPlusPlugin {
     return null;
   }
 
-  static Future<List<InventoryItem>?> fetchInventoryItems() async {
+  static Future<List<InventoryItem>?> fetchInventoryItems(
+      {bool? isRedeemed}) async {
     if (isConnected()) {
-      var res = await _tamatemPlus?.getInventoryTtems(false);
-      if (res?.statusCode != 200) {
-        clear();
-      }
+      var res = await _tamatemPlus?.getInventoryTtems(isRedeemed);
+      return res?.results;
+    }
+    return null;
+  }
+
+  static Future<InventoryRedeemResults?> redeem(String inventoryId,
+      {bool? isRedeemed}) async {
+    if (isConnected()) {
+      var res = await _tamatemPlus?.redeem(inventoryId, isRedeemed: isRedeemed);
+      return res?.results;
+    }
+    return null;
+  }
+
+  static Future<User?> verify(String inventoryId) async {
+    if (isConnected()) {
+      var res = await _tamatemPlus?.verify(inventoryId);
       return res?.results;
     }
     return null;

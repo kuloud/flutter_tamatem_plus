@@ -71,6 +71,25 @@ class Api {
     }
   }
 
+  put(url, {options, data, cancelToken}) async {
+    Response response;
+    try {
+      try {
+        logger.d('data => $url');
+      } catch (e) {
+        logger.e(e);
+      }
+
+      response = await dio.put(url,
+          options: options, data: data, cancelToken: cancelToken);
+      return response.data;
+    } on DioException catch (e) {
+      logger.e('[put] DioException', error: e, stackTrace: e.stackTrace);
+    } on Exception catch (e) {
+      logger.e('[put] Exception', error: e);
+    }
+  }
+
   static void cancelRequests(CancelToken token) {
     token.cancel("cancelled");
   }
