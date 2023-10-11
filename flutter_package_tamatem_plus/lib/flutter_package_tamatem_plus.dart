@@ -1,17 +1,18 @@
 library tamatem_plus;
 
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tamatem_plus/api/model/pojos/inventory_item.dart';
+import 'package:tamatem_plus/api/model/pojos/user.dart';
 import 'package:tamatem_plus/api/tamatem_plus.dart';
-import 'package:tamatem_plus/callback/authorize/authorize_code_provider.dart';
+import 'package:tamatem_plus/callback/authorize/authorize_code_state.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 import 'package:uni_links/uni_links.dart';
 
 class TamatemPlusPlugin {
-  static final AuthorizeCodeProvider _provider = AuthorizeCodeProvider();
-  static AuthorizeCodeProvider get getProvider => _provider;
   static SharedPreferences? _shared;
 
   static const String kKeyAccessToken = 'tamatem_access_token';
@@ -30,14 +31,19 @@ class TamatemPlusPlugin {
   static bool isConnected() {
     var accessToken = _shared?.getString(kKeyAccessToken);
     var user = _shared?.getString(kKeyUser);
-    logger.d('ssss, ${accessToken}');
     return accessToken != null && user != null;
   }
 
   static void clear() async {
-    var shared = await SharedPreferences.getInstance();
-    await shared.remove(TamatemPlusPlugin.kKeyAccessToken);
-    await shared.remove(TamatemPlusPlugin.kKeyUser);
+    await _shared?.remove(TamatemPlusPlugin.kKeyAccessToken);
+    await _shared?.remove(TamatemPlusPlugin.kKeyUser);
+  }
+
+  static User? getUserInfo() {
+    var user = _shared?.getString(kKeyUser);
+    if (user != null) {
+      return jsonDecode(user);
+    }
   }
 
   static Future<List<InventoryItem>?> fetchInventoryItems() async {
@@ -56,7 +62,7 @@ class TamatemPlusPlugin {
       final initialLink = await getInitialLink();
       logger.d('[getInitialLink] > $initialLink');
       if (initialLink != null) {
-        _provider.onRedirectToApp(initialLink);
+        _onRedirectToApp(initialLink);
       }
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
@@ -68,7 +74,40 @@ class TamatemPlusPlugin {
     linkStream.listen((event) {
       logger.d('[listen] > $event');
       if (event == null) return;
-      _provider.onRedirectToApp(event);
+      _onRedirectToApp(event);
     });
+  }
+
+  static void _onRedirectToApp(String code) {
+    try {
+      if (isConnected()) {
+        _tamatemPlus?.openTamatemPlus();
+      } else {
+        _tamatemPlus?.getToken(code).then((res) async {
+          if (res?.error == null) {
+            //
+            var accessToken = res?.results?.accessToken;
+            var user = res?.results?.user;
+            if (accessToken != null) {
+              var shared = await SharedPreferences.getInstance();
+              await shared.setString(
+                  TamatemPlusPlugin.kKeyAccessToken, accessToken);
+              await shared.setString(
+                  TamatemPlusPlugin.kKeyUser, jsonEncode(user));
+            }
+            // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game
+            _tamatemPlus?.setPlayerId('${user!.id}').then((_) {
+              _tamatemPlus?.openTamatemPlus();
+            }).onError((error, stackTrace) {
+              TamatemPlusPlugin.clear();
+            });
+          }
+        }).onError((error, stackTrace) {
+          TamatemPlusPlugin.clear();
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 }

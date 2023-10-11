@@ -66,11 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TamatemButton(
-              onUserConnected: (connected, user) {
-                logger.d('[onConnected]: $connected ${jsonEncode(user)}');
-              },
-              child: const Text(
+            const TamatemButton(
+              child: Text(
                 'Launch tamatem',
                 style: TextStyle(color: Colors.red),
               ),
