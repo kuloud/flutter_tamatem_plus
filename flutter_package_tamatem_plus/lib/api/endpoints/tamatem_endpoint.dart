@@ -6,10 +6,13 @@ import 'package:tamatem_plus/api/endpoints.dart';
 import 'package:tamatem_plus/api/model/get_inventory_items_response.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
+import 'package:tamatem_plus/api/model/get_user_info_request.dart';
+import 'package:tamatem_plus/api/model/get_user_info_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
 import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_response.dart';
+import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemPlusApi {
   final Api _api;
@@ -59,6 +62,13 @@ class TamatemPlusApi {
         queryParameters: request.toJson(), cancelToken: cancelToken);
 
     return getInventoryItemsResponseFromJson(jsonEncode(response));
+  }
+
+  Future<GetUserInfoResponse> getUserInfo(GetUserInfoRequest request,
+      {CancelToken? cancelToken}) async {
+    final response = await _api.get('${Endpoints.kCore}$_kApiGetUserInfo',
+        queryParameters: request.toJson(), cancelToken: cancelToken);
+    return getUserInfoResponseFromJson(jsonEncode(response));
   }
 
   Future<LogoutResponse> logout() async {

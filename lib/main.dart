@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:tamatem_plus/api/model/pojos/inventory_item.dart';
+import 'package:tamatem_plus/api/model/pojos/user.dart';
 import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 import 'package:tamatem_plus/widgets/tamatem_button.dart';
@@ -47,12 +48,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<List<InventoryItem>?> _fetch;
+  late Future<User?> _fetchUser;
+  late Future<List<InventoryItem>?> _fetchItems;
 
   @override
   void initState() {
     super.initState();
-    _fetch = TamatemPlusPlugin.fetchInventoryItems();
+    _fetchUser = TamatemPlusPlugin.getUserInfo();
+    _fetchItems = TamatemPlusPlugin.fetchInventoryItems();
   }
 
   @override
@@ -61,6 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () {
+                TamatemPlusPlugin.clear();
+              },
+              icon: const Icon(Icons.delete))
+        ],
       ),
       body: Center(
         child: Column(
@@ -75,7 +85,25 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             FutureBuilder(
-                future: _fetch,
+                future: _fetchUser,
+                builder: (context, snapshot) {
+                  var user = snapshot.data;
+                  logger.d('---${jsonEncode(user)}');
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    case ConnectionState.done:
+                      return user != null
+                          ? _buildUserInfoCard(user)
+                          : const SizedBox.shrink();
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                }),
+            FutureBuilder(
+                future: _fetchItems,
                 builder: (context, snapshot) {
                   var items = snapshot.data;
                   switch (snapshot.connectionState) {
@@ -91,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           shrinkWrap: true,
                           itemCount: items?.length ?? 0,
                           itemBuilder: (context, index) {
-                            return _buildCard(items![index]);
+                            return _buildInventoryCard(items![index]);
                           });
                     default:
                       return const SizedBox.shrink();
@@ -106,14 +134,37 @@ class _MyHomePageState extends State<MyHomePage> {
             logger.d('isConnected: ${TamatemPlusPlugin.isConnected()}');
             if (TamatemPlusPlugin.isConnected()) {
               setState(() {
-                _fetch = TamatemPlusPlugin.fetchInventoryItems();
+                _fetchUser = TamatemPlusPlugin.getUserInfo();
+                _fetchItems = TamatemPlusPlugin.fetchInventoryItems();
               });
             }
           }),
     );
   }
 
-  Widget _buildCard(InventoryItem inventoryItem) {
+  Widget _buildUserInfoCard(User user) {
+    return Card(
+      child: Column(children: [
+        ListTile(
+          // leading: CircleAvatar(
+          //   backgroundImage: NetworkImage('${user.avatar}'),
+          // ),
+          title: const Text('id'),
+          trailing: Text('${user.id}'),
+        ),
+        ListTile(
+          title: const Text('country'),
+          trailing: Text('${user.country}'),
+        ),
+        ListTile(
+          title: const Text('gameSavedData'),
+          trailing: Text('${jsonEncode(user.gameSavedData)}'),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildInventoryCard(InventoryItem inventoryItem) {
     return Card(
       child: Column(children: [
         ListTile(

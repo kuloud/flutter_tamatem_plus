@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tamatem_plus/api/api.dart';
@@ -6,6 +8,8 @@ import 'package:tamatem_plus/api/model/authorize_request.dart';
 import 'package:tamatem_plus/api/model/get_inventory_items_response.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
+import 'package:tamatem_plus/api/model/get_user_info_request.dart';
+import 'package:tamatem_plus/api/model/get_user_info_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
 import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
@@ -17,7 +21,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'endpoints.dart';
 
 final String kResponseType = 'code';
-final String kRedirectUri = 'https://tamatem.co';
 final String kCodeChallenge = 'rTFMyKOwuLWO9xZM4mTR6LGiyvDxPGTiRBPY3Hik-fo';
 final String kCodeVerifier = 'w-hILxCqImIaKF58kKX985_yQVjXygtmwBpi8lQv9VI';
 final String kCodeChallengeMethod = 'S256';
@@ -70,6 +73,7 @@ class TamatemPlus {
     } on Exception catch (e) {
       logger.e('[getToken]', error: e);
     }
+    return null;
   }
 
   Future<SetPlayerIdResponse?> setPlayerId(String playerId,
@@ -84,6 +88,7 @@ class TamatemPlus {
     } on Exception catch (e) {
       logger.e('[setPlayerId]', error: e);
     }
+    return null;
   }
 
   Future<void> openTamatemPlus() async {
@@ -101,6 +106,20 @@ class TamatemPlus {
     } on Exception catch (e) {
       logger.e('[getInventoryTtems]', error: e);
     }
+    return null;
+  }
+
+  Future<GetUserInfoResponse?> getUserInfo({CancelToken? cancelToken}) async {
+    try {
+      final response = await Api.core
+          .getUserInfo(GetUserInfoRequest(), cancelToken: cancelToken);
+      return response;
+    } on Exception catch (e) {
+      logger.e('[getUserInfo]', error: e);
+    } catch (e) {
+      logger.e('[getUserInfo]', error: e);
+    }
+    return null;
   }
 
   Future<LogoutResponse?> logout() async {
@@ -110,5 +129,6 @@ class TamatemPlus {
     } on Exception catch (e) {
       logger.e('[logout]', error: e);
     }
+    return null;
   }
 }

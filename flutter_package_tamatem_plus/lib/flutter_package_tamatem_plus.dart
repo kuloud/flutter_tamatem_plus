@@ -33,16 +33,20 @@ class TamatemPlusPlugin {
     return accessToken != null && user != null;
   }
 
-  static void clear() async {
-    await _shared?.remove(TamatemPlusPlugin.kKeyAccessToken);
-    await _shared?.remove(TamatemPlusPlugin.kKeyUser);
+  static void clear() {
+    _shared?.remove(TamatemPlusPlugin.kKeyAccessToken);
+    _shared?.remove(TamatemPlusPlugin.kKeyUser);
   }
 
-  static User? getUserInfo() {
-    var user = _shared?.getString(kKeyUser);
-    if (user != null) {
-      return jsonDecode(user);
+  static Future<User?> getUserInfo() async {
+    if (isConnected()) {
+      var res = await _tamatemPlus?.getUserInfo();
+      if (res?.statusCode != 200) {
+        clear();
+      }
+      return res?.results;
     }
+    return null;
   }
 
   static Future<List<InventoryItem>?> fetchInventoryItems() async {
@@ -53,21 +57,18 @@ class TamatemPlusPlugin {
       }
       return res?.results;
     }
+    return null;
   }
 
   static Future<void> _initUniLinks() async {
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       final initialLink = await getInitialLink();
       logger.d('[getInitialLink] > $initialLink');
       if (initialLink != null) {
         _onRedirectToApp(initialLink);
       }
-      // Parse the link and warn the user, if it is not correct,
-      // but keep in mind it could be `null`.
     } on PlatformException {
-      // Handle exception by warning the user their action did not succeed
-      // return?
+      // ignore
     }
 
     linkStream.listen((event) {
@@ -91,10 +92,9 @@ class TamatemPlusPlugin {
               var accessToken = res?.results?.accessToken;
               var user = res?.results?.user;
               if (accessToken != null) {
-                var shared = await SharedPreferences.getInstance();
-                await shared.setString(
+                await _shared?.setString(
                     TamatemPlusPlugin.kKeyAccessToken, accessToken);
-                await shared.setString(
+                await _shared?.setString(
                     TamatemPlusPlugin.kKeyUser, jsonEncode(user));
               }
               // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game

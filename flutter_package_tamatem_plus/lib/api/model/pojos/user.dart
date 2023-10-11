@@ -5,11 +5,11 @@ class User {
   String? firstName;
   Map<String, dynamic>? gameSavedData;
   String? gender;
-  int id;
+  int? id;
   String? lastName;
   String? qrCode;
   String? signUpThrough;
-  String tamatemId;
+  String? tamatemId;
 
   User({
     required this.avatar,
