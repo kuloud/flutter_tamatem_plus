@@ -1,17 +1,16 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tamatem_plus/api/api.dart';
 import 'package:tamatem_plus/api/endpoints/tamatem_endpoint.dart';
 import 'package:tamatem_plus/api/model/authorize_request.dart';
+import 'package:tamatem_plus/api/model/get_inventory_items_response.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
+import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_response.dart';
 import 'package:tamatem_plus/utils/logger.dart';
-import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -83,7 +82,7 @@ class TamatemPlus {
           cancelToken: cancelToken);
       return response;
     } on Exception catch (e) {
-      logger.e('[getToken]', error: e);
+      logger.e('[setPlayerId]', error: e);
     }
   }
 
@@ -92,10 +91,24 @@ class TamatemPlus {
     launchUrl(endpointUrl);
   }
 
-  Future<void> getInventoryTtems(bool isRedeemed,
+  Future<GetInventoryItemsResponse?> getInventoryTtems(bool isRedeemed,
       {CancelToken? cancelToken}) async {
-    final response = await Api.core.getInventoryItems(
-        InventoryItemRequest(isRedeemed: isRedeemed),
-        cancelToken: cancelToken);
+    try {
+      final response = await Api.core.getInventoryItems(
+          InventoryItemRequest(isRedeemed: isRedeemed),
+          cancelToken: cancelToken);
+      return response;
+    } on Exception catch (e) {
+      logger.e('[getInventoryTtems]', error: e);
+    }
+  }
+
+  Future<LogoutResponse?> logout() async {
+    try {
+      final response = await Api.core.logout();
+      return response;
+    } on Exception catch (e) {
+      logger.e('[logout]', error: e);
+    }
   }
 }

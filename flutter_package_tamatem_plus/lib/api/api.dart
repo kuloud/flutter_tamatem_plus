@@ -10,7 +10,6 @@ import 'package:tamatem_plus/utils/logger.dart';
 class Api {
   static Api? instance;
   late Dio dio;
-  late Dio dioGo;
   late BaseOptions baseOptions;
 
   Api(String baseUrl) {

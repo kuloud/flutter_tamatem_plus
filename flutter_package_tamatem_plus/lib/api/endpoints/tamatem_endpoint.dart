@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:tamatem_plus/api/api.dart';
 import 'package:tamatem_plus/api/endpoints.dart';
+import 'package:tamatem_plus/api/model/get_inventory_items_response.dart';
 import 'package:tamatem_plus/api/model/get_token_request.dart';
 import 'package:tamatem_plus/api/model/get_token_response.dart';
 import 'package:tamatem_plus/api/model/inventory_item_request.dart';
+import 'package:tamatem_plus/api/model/logout_response.dart';
 import 'package:tamatem_plus/api/model/set_player_id_request.dart';
 import 'package:tamatem_plus/api/model/set_player_id_response.dart';
-import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemPlusApi {
   final Api _api;
@@ -19,7 +20,7 @@ class TamatemPlusApi {
 
   static const String _kApiPostSetPlayerId = 'player/set-player-id/';
 
-  static const String _kApiGetInventoryTtems = 'inventory-item/';
+  static const String _kApiGetInventoryTtems = 'inventory-items/';
 
   static const String _kApiGetUserInfo = 'player/';
 
@@ -51,15 +52,17 @@ class TamatemPlusApi {
     return setPlayerIdResponseFromJson(jsonEncode(response));
   }
 
-  Future<void> getInventoryItems(InventoryItemRequest request,
+  Future<GetInventoryItemsResponse> getInventoryItems(
+      InventoryItemRequest request,
       {CancelToken? cancelToken}) async {
     final response = await _api.get('${Endpoints.kCore}$_kApiGetInventoryTtems',
-        options: Options(headers: {
-          'Authorization': '',
-        }),
-        queryParameters: request.toJson(),
-        cancelToken: cancelToken);
+        queryParameters: request.toJson(), cancelToken: cancelToken);
 
-    // TODO
+    return getInventoryItemsResponseFromJson(jsonEncode(response));
+  }
+
+  Future<LogoutResponse> logout() async {
+    final response = await _api.post('${Endpoints.kCore}$_kApiPostLogout');
+    return logoutResponseFromJson(jsonEncode(response));
   }
 }
