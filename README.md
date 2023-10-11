@@ -9,6 +9,8 @@ Tamatem Plus's online document:
 
 https://developers.tamatemplus.com/
 
+<img src="./screenshots/SimulatorScreenshot-iPhone15.png" width = "300" alt="tamatemplus" align=center />
+
 ### Start the project
 
 1. Add ".env" file in the root Project:
