@@ -20,7 +20,7 @@ class TamatemPlusApi {
 
   static const String _kApiPostSetPlayerId = 'player/set-player-id/';
 
-  static const String _kApiGetInventoryTtems = 'inventory-items/';
+  static const String _kApiGetInventoryTtems = 'inventory-item/';
 
   static const String _kApiGetUserInfo = 'player/';
 

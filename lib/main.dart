@@ -64,24 +64,37 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const TamatemButton(
-              child: Text(
-                'Launch tamatem',
-                style: TextStyle(color: Colors.red),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Launch tamatem',
+                  style: TextStyle(color: Colors.red, fontSize: 18),
+                ),
               ),
             ),
             FutureBuilder(
                 future: _fetch,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var items = snapshot.data;
-                    return ListView.builder(itemBuilder: (context, index) {
-                      return _buildCard(items![index]);
-                    });
-                  } else {
-                    return const SizedBox.shrink();
+                  var items = snapshot.data;
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    case ConnectionState.done:
+                      return ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          shrinkWrap: true,
+                          itemCount: items?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return _buildCard(items![index]);
+                          });
+                    default:
+                      return const SizedBox.shrink();
                   }
                 })
           ],
@@ -101,6 +114,37 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildCard(InventoryItem inventoryItem) {
-    return Text(inventoryItem.name ?? '');
+    return Card(
+      child: Column(children: [
+        ListTile(
+          title: const Text('id'),
+          trailing: Text(inventoryItem.id ?? ''),
+        ),
+        ListTile(
+          title: const Text('name'),
+          trailing: Text(inventoryItem.name ?? ''),
+        ),
+        ListTile(
+          title: const Text('player_full_name'),
+          trailing: Text(inventoryItem.playerFullName ?? ''),
+        ),
+        ListTile(
+          title: const Text('player_serial_number'),
+          trailing: Text(inventoryItem.playerSerialNumber ?? ''),
+        ),
+        ListTile(
+          title: const Text('game_player_id'),
+          trailing: Text(inventoryItem.gamePlayerId ?? ''),
+        ),
+        ListTile(
+          title: const Text('is_redeemed'),
+          trailing: Text('${inventoryItem.isRedeemed}'),
+        ),
+        ListTile(
+          title: const Text('is_verified'),
+          trailing: Text('${inventoryItem.isVerified}'),
+        ),
+      ]),
+    );
   }
 }

@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tamatem_plus/api/model/pojos/inventory_item.dart';
 import 'package:tamatem_plus/api/model/pojos/user.dart';
 import 'package:tamatem_plus/api/tamatem_plus.dart';
-import 'package:tamatem_plus/callback/authorize/authorize_code_state.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -48,8 +47,8 @@ class TamatemPlusPlugin {
 
   static Future<List<InventoryItem>?> fetchInventoryItems() async {
     if (isConnected()) {
-      var res = await _tamatemPlus?.getInventoryTtems(true);
-      if (res?.statusCode != null) {
+      var res = await _tamatemPlus?.getInventoryTtems(false);
+      if (res?.statusCode != 200) {
         clear();
       }
       return res?.results;
@@ -78,33 +77,37 @@ class TamatemPlusPlugin {
     });
   }
 
-  static void _onRedirectToApp(String code) {
+  static void _onRedirectToApp(String data) {
     try {
-      if (isConnected()) {
-        _tamatemPlus?.openTamatemPlus();
-      } else {
-        _tamatemPlus?.getToken(code).then((res) async {
-          if (res?.error == null) {
-            //
-            var accessToken = res?.results?.accessToken;
-            var user = res?.results?.user;
-            if (accessToken != null) {
-              var shared = await SharedPreferences.getInstance();
-              await shared.setString(
-                  TamatemPlusPlugin.kKeyAccessToken, accessToken);
-              await shared.setString(
-                  TamatemPlusPlugin.kKeyUser, jsonEncode(user));
+      if (data.startsWith(dotenv.env['TAMATEM_CUSTOM_SCHEME']!)) {
+        var uri = Uri.parse(data);
+        var code = uri.queryParameters['code'];
+        if (isConnected()) {
+          _tamatemPlus?.openTamatemPlus();
+        } else {
+          _tamatemPlus?.getToken(code!).then((res) async {
+            if (res?.error == null) {
+              //
+              var accessToken = res?.results?.accessToken;
+              var user = res?.results?.user;
+              if (accessToken != null) {
+                var shared = await SharedPreferences.getInstance();
+                await shared.setString(
+                    TamatemPlusPlugin.kKeyAccessToken, accessToken);
+                await shared.setString(
+                    TamatemPlusPlugin.kKeyUser, jsonEncode(user));
+              }
+              // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game
+              _tamatemPlus?.setPlayerId('${user!.id}').then((_) {
+                _tamatemPlus?.openTamatemPlus();
+              }).onError((error, stackTrace) {
+                TamatemPlusPlugin.clear();
+              });
             }
-            // After calling get-token success, use the SET_PLAYER_ID_ENDPOINT to connect the player to the game
-            _tamatemPlus?.setPlayerId('${user!.id}').then((_) {
-              _tamatemPlus?.openTamatemPlus();
-            }).onError((error, stackTrace) {
-              TamatemPlusPlugin.clear();
-            });
-          }
-        }).onError((error, stackTrace) {
-          TamatemPlusPlugin.clear();
-        });
+          }).onError((error, stackTrace) {
+            TamatemPlusPlugin.clear();
+          });
+        }
       }
     } catch (e) {
       // ignore
