@@ -30,7 +30,11 @@ class _TamatemButtonState extends State<TamatemButton> {
   void dispose() {
     super.dispose();
     if (TamatemPlusPlugin.isConnected()) {
-      tamatemPlus.logout();
+      TamatemPlusPlugin.fetchInventoryItems(isRedeemed: false).then((items) {
+        if ((items?.length ?? 0) == 0) {
+          tamatemPlus.logout();
+        }
+      });
     }
   }
 
