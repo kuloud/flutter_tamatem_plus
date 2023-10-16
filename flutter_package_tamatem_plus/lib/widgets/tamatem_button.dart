@@ -32,7 +32,9 @@ class _TamatemButtonState extends State<TamatemButton> {
     if (TamatemPlusPlugin.isConnected()) {
       TamatemPlusPlugin.fetchInventoryItems(isRedeemed: false).then((items) {
         if ((items?.length ?? 0) == 0) {
-          tamatemPlus.logout();
+          tamatemPlus.logout().then((value) {
+            TamatemPlusPlugin.clear();
+          });
         }
       });
     }
@@ -42,7 +44,11 @@ class _TamatemButtonState extends State<TamatemButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        tamatemPlus.authorize();
+        if (TamatemPlusPlugin.isConnected()) {
+          tamatemPlus.openTamatemPlus();
+        } else {
+          tamatemPlus.authorize();
+        }
       },
       child: Container(
         child: widget.child,
