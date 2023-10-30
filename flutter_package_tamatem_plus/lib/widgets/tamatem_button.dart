@@ -5,12 +5,13 @@ import 'package:tamatem_plus/flutter_package_tamatem_plus.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
 class TamatemButton extends StatefulWidget {
-  const TamatemButton({super.key, required this.child});
+  const TamatemButton({super.key, required this.child, this.onTap});
 
   @override
   State<TamatemButton> createState() => _TamatemButtonState();
 
   final Widget child;
+  final bool Function()? onTap;
 }
 
 class _TamatemButtonState extends State<TamatemButton> {
@@ -44,6 +45,9 @@ class _TamatemButtonState extends State<TamatemButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        if (widget.onTap?.call() ?? false) {
+          return;
+        }
         if (TamatemPlusPlugin.isConnected()) {
           tamatemPlus.openTamatemPlus();
         } else {
