@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tamatem_plus/api/endpoints/tamatem_endpoint.dart';
 import 'package:tamatem_plus/api/interceptors/interceptors.dart';
-import 'package:tamatem_plus/api/interceptors/logger_interceptor.dart';
 import 'package:tamatem_plus/utils/logger.dart';
 
 class Api {
