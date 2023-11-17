@@ -29,10 +29,12 @@ class TamatemPlusApi {
 
   static const String _kApiPutRedeemItem = 'inventory/redeem/';
 
+  // ignore: unused_field
   static const String _kApiPutRedeemAll = 'inventory/redeem/';
 
   static const String _kApiPostLogout = 'player/logout/';
 
+  // ignore: unused_field
   static const String _kApiPutVerify = 'inventory/verify/';
 
   TamatemPlusApi(this._api);

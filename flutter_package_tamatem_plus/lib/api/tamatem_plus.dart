@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tamatem_plus/api/api.dart';
@@ -21,17 +19,15 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'endpoints.dart';
 
-final String kResponseType = 'code';
-final String kCodeChallenge = 'rTFMyKOwuLWO9xZM4mTR6LGiyvDxPGTiRBPY3Hik-fo';
-final String kCodeVerifier = 'w-hILxCqImIaKF58kKX985_yQVjXygtmwBpi8lQv9VI';
-final String kCodeChallengeMethod = 'S256';
-final String kGrantType = 'authorization_code';
-final String kScope = 'read write';
+const String kResponseType = 'code';
+const String kCodeChallenge = 'rTFMyKOwuLWO9xZM4mTR6LGiyvDxPGTiRBPY3Hik-fo';
+const String kCodeVerifier = 'w-hILxCqImIaKF58kKX985_yQVjXygtmwBpi8lQv9VI';
+const String kCodeChallengeMethod = 'S256';
+const String kGrantType = 'authorization_code';
+const String kScope = 'read write';
 
-/**
- * API Document:
- * https://developers.tamatemplus.com/
- */
+/// API Document:
+/// https://developers.tamatemplus.com/
 
 class TamatemPlus {
   final String clientId;
