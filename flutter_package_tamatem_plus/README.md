@@ -1,17 +1,6 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# tamatem_plus
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-RESTful integrates of Tamatem Plus.
+A flutter project that RESTful integrates Tamatem Plus.
 
 ## Features
 
@@ -24,7 +13,6 @@ RESTful integrates of Tamatem Plus.
     1. Get GamePlayer info
     1. Redeem inventory items
     1. Logout
-
 
 
 ## Getting started
