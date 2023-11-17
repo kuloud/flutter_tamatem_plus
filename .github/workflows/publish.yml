@@ -12,12 +12,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Change to target dictory
-        run: cd ./flutter_package_tamatem_plus/
       - name: Publish
         uses: sakebook/actions-flutter-pub-publisher@v1.4.1
         with:
           credential: ${{ secrets.CREDENTIAL_JSON }}
+          package_directory: ./flutter_package_tamatem_plus/
           flutter_package: true
           skip_test: true
           dry_run: false
