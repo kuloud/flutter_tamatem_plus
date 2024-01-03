@@ -16,6 +16,7 @@ jobs:
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
           accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          package_directory: ./flutter_package_tamatem_plus/
           skipTests: true
           flutter: true
           force: true
