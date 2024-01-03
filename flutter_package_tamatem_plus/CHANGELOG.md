@@ -1,3 +1,7 @@
+## 1.0.0
+2024-01-03
+1. Upgrade dependencies
+
 ## 0.0.1+1
 
 1. Implemented RESTful APIs for TamatemPlus:
